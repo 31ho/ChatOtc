@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "69026746033",
+    "firebase_url": "https://chatotc-5d74d.firebaseio.com",
+    "project_id": "chatotc-5d74d",
+    "storage_bucket": "chatotc-5d74d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69026746033:android:1b17a222713bc855",
+        "android_client_info": {
+          "package_name": "com.chatotc.ho.chatotc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69026746033-ac26takqhlhr29uhm5gkl0v36j1u7nge.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPsdaeXVQa3BAVKuKxJneILT4ODfoLVPQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
