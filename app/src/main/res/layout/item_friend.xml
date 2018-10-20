@@ -11,12 +11,12 @@
         android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/frienditem_imageview"
+        android:id="@+id/itemfriend_imageview"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_margin="10dp" />
     <TextView
-        android:id="@+id/frienditem_textview"
+        android:id="@+id/itemfriend_textview"
         android:text="아이디"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,6 +26,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/itemfriend_colorlayout"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"/>

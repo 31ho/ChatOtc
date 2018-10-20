@@ -37,7 +37,7 @@ public class PeopleFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_people, container,false);
         RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.peopleFragment_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-        recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter());
+        recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter(getActivity()));
 
         return view;
     }
