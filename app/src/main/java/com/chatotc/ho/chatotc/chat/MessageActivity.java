@@ -20,7 +20,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -33,6 +35,7 @@ public class MessageActivity extends AppCompatActivity {
     private String chatRoomUid;
 
     private RecyclerView recyclerView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class MessageActivity extends AppCompatActivity {
                     ChatModel.Comment comment = new ChatModel.Comment();
                     comment.uid = uid;
                     comment.message = editText.getText().toString();
+                    comment.timestamp = ServerValue.TIMESTAMP;
                     FirebaseDatabase.getInstance().getReference().child("chatrooms")
                             .child(chatRoomUid)
                             .child("comments")

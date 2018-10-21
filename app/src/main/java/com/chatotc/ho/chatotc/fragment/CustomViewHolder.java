@@ -15,10 +15,12 @@ public class CustomViewHolder extends RecyclerView.ViewHolder {
     public TextView textView;
     public LinearLayout colorLayout;
 
+
     public CustomViewHolder(@NonNull View itemView) {
         super(itemView);
         imageView = (ImageView) itemView.findViewById(R.id.itemfriend_imageview);
         textView = (TextView) itemView.findViewById(R.id.itemfriend_textview);
         colorLayout = (LinearLayout) itemView.findViewById(R.id.itemfriend_colorlayout);
+
     }
 }

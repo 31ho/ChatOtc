@@ -18,8 +18,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 
 public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
@@ -29,6 +32,8 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
     String chatRoomUid;
     String uid;
     RecyclerView recyclerView;
+
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
     public MessageRecyclerViewAdapter(String chatRoomUid, String des, String uid, RecyclerView rView){
         comments = new ArrayList<>();
@@ -82,6 +87,11 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
             ((LinearLayout)messageViewHolder.linearLayout_message).setGravity(Gravity.LEFT);
         }
 
+        long unixTime = (long) comments.get(i).timestamp;
+        Date date = new Date(unixTime);
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+        String time = simpleDateFormat.format(date);
+        messageViewHolder.textView_timestamp.setText(time);
     }
 
     @Override
