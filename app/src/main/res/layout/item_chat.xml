@@ -11,7 +11,7 @@
         android:layout_height="50dp"
         android:layout_margin="10dp"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -19,15 +19,30 @@
         <TextView
             android:id="@+id/itemchat_textview_title"
             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:textSize="15dp"
             android:text="방이름"/>
 
         <TextView
             android:id="@+id/itemchat_textview_lastmessage"
+            android:layout_below="@id/itemchat_textview_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="마지막 메시지"
+            android:textSize="10dp"/>
+
+        <TextView
+            android:id="@+id/itemchat_textview_timestamp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="마지막 메시지"/>
-    </LinearLayout>
+            android:text="18.00.00"
+            android:textSize="8dp"
+            android:textColor="@android:color/darker_gray"/>
+    </RelativeLayout>
 
 </LinearLayout>

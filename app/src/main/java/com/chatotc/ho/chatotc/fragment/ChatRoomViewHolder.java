@@ -14,13 +14,14 @@ public class ChatRoomViewHolder extends RecyclerView.ViewHolder {
     public ImageView chatRoom_imageView;
     public TextView chatRoom_title;
     public TextView chatRoom_last_message;
+    public TextView chatRoom_timestamp;
 
     public ChatRoomViewHolder(@NonNull View itemView) {
         super(itemView);
 
-
         chatRoom_imageView = (ImageView) itemView.findViewById(R.id.itemchat_imageview);
         chatRoom_title = (TextView) itemView.findViewById(R.id.itemchat_textview_title);
         chatRoom_last_message = (TextView) itemView.findViewById(R.id.itemchat_textview_lastmessage);
+        chatRoom_timestamp = (TextView) itemView.findViewById(R.id.itemchat_textview_timestamp);
     }
 }
