@@ -96,8 +96,6 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
                                 .apply(new RequestOptions().circleCrop())
                                 .into(chatRoomViewHolder.chatRoom_imageView);
                         chatRoomViewHolder.chatRoom_title.setText(userModel.userName);
-                        Log.d("호섭이들 사진", userModel.profileImageUrl);
-                        Log.d("호섭이들 이름", userModel.userName);
                     }
 
                     @Override

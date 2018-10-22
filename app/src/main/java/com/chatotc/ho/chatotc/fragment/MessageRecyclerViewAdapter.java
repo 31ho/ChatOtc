@@ -15,6 +15,7 @@ import com.chatotc.ho.chatotc.R;
 import com.chatotc.ho.chatotc.model.ChatModel;
 import com.chatotc.ho.chatotc.model.NotificationModel;
 import com.chatotc.ho.chatotc.model.UserModel;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -139,10 +140,13 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
         Gson gson = new Gson();
 
+        String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         NotificationModel notificationModel = new NotificationModel();
         notificationModel.to = destinationUserModel.pushToken;
-        notificationModel.notification.title = "보낸 이 아이디";
+        notificationModel.notification.title = userName;
         notificationModel.notification.text = text;
+        notificationModel.data.title = userName;
+        notificationModel.data.text = text;
 
         RequestBody requestBody = RequestBody
                 .create(MediaType.parse("application/json; charset=utp8"), gson.toJson(notificationModel));

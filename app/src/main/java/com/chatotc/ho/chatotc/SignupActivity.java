@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.storage.FirebaseStorage;
@@ -87,6 +88,9 @@ public class SignupActivity extends AppCompatActivity {
 
 
                                     final String uid = task.getResult().getUser().getUid();
+                                    UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(name.getText().toString()).build();
+                                    task.getResult().getUser().updateProfile(userProfileChangeRequest);
                                     final Uri uri = Uri.fromFile(new File(imageUri.toString()));
                                     final StorageReference riverRef = FirebaseStorage.getInstance().getReference().child("userImages").child(uid);
                                     UploadTask uploadTask = riverRef.putFile(imageUri);
