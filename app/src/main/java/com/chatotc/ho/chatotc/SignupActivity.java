@@ -1,5 +1,6 @@
 package com.chatotc.ho.chatotc;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,59 +84,58 @@ public class SignupActivity extends AppCompatActivity {
                 }
 
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
-                            .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
+                        .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
 
 
-                                    final String uid = task.getResult().getUser().getUid();
-                                    UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
-                                            .setDisplayName(name.getText().toString()).build();
-                                    task.getResult().getUser().updateProfile(userProfileChangeRequest);
-                                    final Uri uri = Uri.fromFile(new File(imageUri.toString()));
-                                    final StorageReference riverRef = FirebaseStorage.getInstance().getReference().child("userImages").child(uid);
-                                    UploadTask uploadTask = riverRef.putFile(imageUri);
+                                final String uid = task.getResult().getUser().getUid();
+                                UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(name.getText().toString()).build();
+                                task.getResult().getUser().updateProfile(userProfileChangeRequest);
+                                final StorageReference riverRef = FirebaseStorage.getInstance().getReference().child("userImages").child(uid);
+                                UploadTask uploadTask = riverRef.putFile(imageUri);
 
-                                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                        @Override
-                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                            if (!task.isSuccessful()) {
-                                                throw task.getException();
-                                            }
-
-                                            // Continue with the task to get the download URL
-                                            return riverRef.getDownloadUrl();
+                                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                    @Override
+                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                        if (!task.isSuccessful()) {
+                                            throw task.getException();
                                         }
-                                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Uri> task) {
-                                            if (task.isSuccessful()) {
-                                                Uri downloadUri = task.getResult();
 
-                                                UserModel userModel = new UserModel();
-                                                userModel.userName = name.getText().toString();
-                                                userModel.profileImageUrl = downloadUri.toString();
-                                                userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                                FirebaseDatabase.getInstance().getReference().child("users").child(uid).setValue(userModel)
-                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void aVoid) {
-                                                                Toast.makeText(SignupActivity.this,"가입이 완료되었습니다.",Toast.LENGTH_SHORT).show();
-                                                                SignupActivity.this.finish();
-                                                            }
-                                                        });
+                                        // Continue with the task to get the download URL
+                                        return riverRef.getDownloadUrl();
+                                    }
+                                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Uri> task) {
+                                        if (task.isSuccessful()) {
+                                            Uri downloadUri = task.getResult();
+
+                                            UserModel userModel = new UserModel();
+                                            userModel.userName = name.getText().toString();
+                                            userModel.profileImageUrl = downloadUri.toString();
+                                            userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                            FirebaseDatabase.getInstance().getReference().child("users").child(uid).setValue(userModel)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Toast.makeText(SignupActivity.this,"가입이 완료되었습니다.",Toast.LENGTH_SHORT).show();
+                                                            SignupActivity.this.finish();
+                                                        }
+                                                    });
 
 
-                                            } else {
-                                                // Handle failures
-                                                // ...
+                                        } else {
+                                            // Handle failures
+                                            // ...
 
 
-                                            }
                                         }
-                                    });
-                                }
-                            });
+                                    }
+                                });
+                            }
+                        });
                 }
         });
     }
@@ -144,6 +145,7 @@ public class SignupActivity extends AppCompatActivity {
         if(requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK){
             profile.setImageURI(data.getData());
             imageUri = data.getData();
+            Log.d("확인", imageUri.toString());
         }
     }
 }

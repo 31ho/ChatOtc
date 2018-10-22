@@ -12,7 +12,7 @@
         android:title="Chat"/>
     <item
 
-        android:id="@+id/action_Account"
+        android:id="@+id/action_account"
         android:icon="@drawable/baseline_people_24"
         android:title="Account"/>
 

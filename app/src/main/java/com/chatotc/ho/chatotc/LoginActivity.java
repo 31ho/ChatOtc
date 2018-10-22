@@ -1,5 +1,6 @@
 package com.chatotc.ho.chatotc;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -34,6 +35,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},0);
+        }
+
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseAuth.signOut();

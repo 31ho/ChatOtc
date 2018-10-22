@@ -73,6 +73,7 @@ public class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<Recy
                 .into(((CustomViewHolder)viewHolder).imageView);
 
         ((CustomViewHolder)viewHolder).textView.setText(userModels.get(i).userName);
+
         if(i == 0){
             ((CustomViewHolder)viewHolder).colorLayout.setBackgroundColor(ContextCompat.getColor(mActivity, R.color.myColor));
         }
@@ -91,6 +92,10 @@ public class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
             }
         });
+
+        if(userModels.get(i).comment != null) {
+            ((CustomViewHolder)viewHolder).textView_comment.setText(userModels.get(i).comment);
+        }
     }
 
     @Override
