@@ -26,7 +26,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -114,7 +117,15 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Uri downloadUri = task.getResult();
 
-//                               FirebaseDatabase.getInstance().getReference().child("users").child().setValue(downloadUri);
+                               String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                                Map<String,Object> stringObjectMap = new HashMap<>();
+
+                                stringObjectMap.put("profileImageUrl", downloadUri.toString());
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child("users")
+                                        .child(uid)
+                                        .updateChildren(stringObjectMap);
 
                             } else {
                                 // Handle failures
