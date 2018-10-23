@@ -4,10 +4,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -15,9 +17,12 @@ import com.chatotc.ho.chatotc.R;
 import com.chatotc.ho.chatotc.model.ChatModel;
 import com.chatotc.ho.chatotc.model.NotificationModel;
 import com.chatotc.ho.chatotc.model.UserModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
@@ -26,7 +31,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import okhttp3.Call;
@@ -40,11 +47,14 @@ import okhttp3.Response;
 
 public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
-    List<ChatModel.Comment> comments;
+    private List<ChatModel.Comment> comments;
     private UserModel destinationUserModel;
-    String chatRoomUid;
-    String uid;
-    RecyclerView recyclerView;
+    private String chatRoomUid;
+    private String uid;
+    private RecyclerView recyclerView;
+
+    private DatabaseReference databaseReference;
+    private ValueEventListener valueEventListener;
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
@@ -105,6 +115,7 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
         String time = simpleDateFormat.format(date);
         messageViewHolder.textView_timestamp.setText(time);
+
     }
 
     @Override
@@ -113,20 +124,43 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
     void getMessageList(){
-        FirebaseDatabase.getInstance().getReference()
+        databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child("chatrooms")
                 .child(chatRoomUid)
-                .child("comments")
+                .child("comments");
+        valueEventListener = databaseReference
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                         comments.clear();
+                        Map<String,Object> readUsersMap = new HashMap<>();
 
                         for(DataSnapshot item : dataSnapshot.getChildren()){
+
+                            String key = item.getKey();
+                            ChatModel.Comment comment = item.getValue(ChatModel.Comment.class);
+
+                            comment.readUsers.put(uid, true);
+                            readUsersMap.put(key, comment);
+
                             comments.add(item.getValue(ChatModel.Comment.class));
+
                         }
-                        notifyDataSetChanged();
-                        recyclerView.scrollToPosition(getItemCount() - 1);
+
+                        FirebaseDatabase.getInstance().getReference()
+                                .child("chatrooms")
+                                .child(chatRoomUid)
+                                .child("comments")
+                                .updateChildren(readUsersMap)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        notifyDataSetChanged();
+                                        recyclerView.scrollToPosition(getItemCount() - 1);
+                                    }
+                                });
+
                     }
 
                     @Override
@@ -169,4 +203,10 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
             }
         });
     }
+
+    public ValueEventListener getValueEventListener(){
+        ValueEventListener valueEventListener = this.valueEventListener;
+        return valueEventListener;
+    }
+
 }

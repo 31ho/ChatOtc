@@ -162,4 +162,15 @@ public class MessageActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+                .child("chatrooms")
+                .child(chatRoomUid)
+                .child("comments");
+        databaseReference.removeEventListener(adapter.getValueEventListener());
+        finish();
+    }
 }
