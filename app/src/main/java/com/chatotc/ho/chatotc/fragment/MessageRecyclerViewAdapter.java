@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -58,6 +59,7 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
+    int peopleCount = 0;
     public MessageRecyclerViewAdapter(String chatRoomUid, String des, String uid, RecyclerView rView){
         comments = new ArrayList<>();
         this.chatRoomUid = chatRoomUid;
@@ -96,7 +98,10 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
             messageViewHolder.textView_message.setText(comments.get(i).message);
             messageViewHolder.textView_message.setBackgroundResource(R.drawable.right_bubble);
             messageViewHolder.linearLayout_destination.setVisibility(View.INVISIBLE);
+
             ((LinearLayout)messageViewHolder.linearLayout_message).setGravity(Gravity.RIGHT);
+
+            setReadCounter(i, messageViewHolder.textView_readCounter_left);
         } else {
             Glide.with(viewHolder.itemView.getContext())
                     .load(destinationUserModel.profileImageUrl)
@@ -108,6 +113,8 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
             messageViewHolder.textView_message.setText(comments.get(i).message);
 
             ((LinearLayout)messageViewHolder.linearLayout_message).setGravity(Gravity.LEFT);
+
+            setReadCounter(i, messageViewHolder.textView_readCounter_right);
         }
 
         long unixTime = (long) comments.get(i).timestamp;
@@ -134,33 +141,39 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         comments.clear();
-                        Map<String,Object> readUsersMap = new HashMap<>();
+                        Map<String, Object> readUsersMap = new HashMap<>();
 
-                        for(DataSnapshot item : dataSnapshot.getChildren()){
+                        for (DataSnapshot item : dataSnapshot.getChildren()) {
 
                             String key = item.getKey();
-                            ChatModel.Comment comment = item.getValue(ChatModel.Comment.class);
+                            ChatModel.Comment comment_origin = item.getValue(ChatModel.Comment.class);
+                            ChatModel.Comment comment_motify = item.getValue(ChatModel.Comment.class);
 
-                            comment.readUsers.put(uid, true);
-                            readUsersMap.put(key, comment);
+                            comment_motify.readUsers.put(uid, true);
+                            readUsersMap.put(key, comment_motify);
 
-                            comments.add(item.getValue(ChatModel.Comment.class));
+                            comments.add(comment_origin);
 
                         }
+                        if(comments.size() == 0){return;}
+                        if (!comments.get(comments.size() - 1).readUsers.containsKey(uid)) {
+                            FirebaseDatabase.getInstance().getReference()
+                                    .child("chatrooms")
+                                    .child(chatRoomUid)
+                                    .child("comments")
+                                    .updateChildren(readUsersMap)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            notifyDataSetChanged();
+                                            recyclerView.scrollToPosition(getItemCount() - 1);
+                                        }
+                                    });
 
-                        FirebaseDatabase.getInstance().getReference()
-                                .child("chatrooms")
-                                .child(chatRoomUid)
-                                .child("comments")
-                                .updateChildren(readUsersMap)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        notifyDataSetChanged();
-                                        recyclerView.scrollToPosition(getItemCount() - 1);
-                                    }
-                                });
-
+                        } else {
+                            notifyDataSetChanged();
+                            recyclerView.scrollToPosition(getItemCount() - 1);
+                        }
                     }
 
                     @Override
@@ -207,6 +220,43 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
     public ValueEventListener getValueEventListener(){
         ValueEventListener valueEventListener = this.valueEventListener;
         return valueEventListener;
+    }
+
+    void setReadCounter(final int pos, final TextView textView){
+
+        if(peopleCount == 0) {
+            FirebaseDatabase.getInstance().getReference()
+                    .child("chatrooms")
+                    .child(chatRoomUid)
+                    .child("users")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Map<String, Boolean> users = (Map<String, Boolean>) dataSnapshot.getValue();
+                            peopleCount = users.size();
+                            int count = peopleCount - comments.get(pos).readUsers.size();
+                            if (count > 0) {
+                                textView.setVisibility(View.VISIBLE);
+                                textView.setText(String.valueOf(count));
+                            } else {
+                                textView.setVisibility(View.INVISIBLE);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+        } else {
+            int count = peopleCount - comments.get(pos).readUsers.size();
+            if (count > 0) {
+                textView.setVisibility(View.VISIBLE);
+                textView.setText(String.valueOf(count));
+            } else {
+                textView.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
 }
