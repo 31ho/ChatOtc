@@ -107,29 +107,30 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
         Map<String,ChatModel.Comment> commentMap = new TreeMap<>(Collections.reverseOrder());
         commentMap.putAll(chatModelList.get(i).comments);
 
-        String lastMessageKey = (String) commentMap.keySet().toArray()[0];
-        chatRoomViewHolder.chatRoom_last_message.setText(chatModelList.get(i).comments.get(lastMessageKey).message);
+        if (commentMap.keySet().toArray().length > 0) {
+            String lastMessageKey = (String) commentMap.keySet().toArray()[0];
+            chatRoomViewHolder.chatRoom_last_message.setText(chatModelList.get(i).comments.get(lastMessageKey).message);
 
-        chatRoomViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), MessageActivity.class);
-                intent.putExtra("destinationUid", destinationUsers.get(i));
+            chatRoomViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), MessageActivity.class);
+                    intent.putExtra("destinationUid", destinationUsers.get(i));
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                    ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(v.getContext(), R.anim.fromright, R.anim.toleft);
-                    v.getContext().startActivity(intent, activityOptions.toBundle());
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(v.getContext(), R.anim.fromright, R.anim.toleft);
+                        v.getContext().startActivity(intent, activityOptions.toBundle());
 
+                    }
                 }
-            }
-        });
+            });
 
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
-        long unixTime = (long) chatModelList.get(i).comments.get(lastMessageKey).timestamp;
-        Date date = new Date(unixTime);
-        chatRoomViewHolder.chatRoom_timestamp.setText(simpleDateFormat.format(date));
-
+            long unixTime = (long) chatModelList.get(i).comments.get(lastMessageKey).timestamp;
+            Date date = new Date(unixTime);
+            chatRoomViewHolder.chatRoom_timestamp.setText(simpleDateFormat.format(date));
+        }
     }
 
     @Override

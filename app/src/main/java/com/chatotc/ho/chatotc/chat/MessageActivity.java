@@ -170,7 +170,9 @@ public class MessageActivity extends AppCompatActivity {
                 .child("chatrooms")
                 .child(chatRoomUid)
                 .child("comments");
-        databaseReference.removeEventListener(adapter.getValueEventListener());
+        if(adapter.getValueEventListener() != null) {
+            databaseReference.removeEventListener(adapter.getValueEventListener());
+        }
         finish();
     }
 }

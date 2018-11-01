@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.chatotc.ho.chatotc.R;
+import com.chatotc.ho.chatotc.SelectFriendActivity;
 import com.chatotc.ho.chatotc.chat.MessageActivity;
 import com.chatotc.ho.chatotc.model.UserModel;
 import com.google.firebase.database.DataSnapshot;
@@ -34,11 +36,18 @@ public class PeopleFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_people, container,false);
+        final View view = inflater.inflate(R.layout.fragment_people, container,false);
         RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.peopleFragment_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-        recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter(getActivity()));
+        recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter(getActivity(),0));
 
+        FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.peopleFragment_floatingButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(view.getContext(), SelectFriendActivity.class));
+            }
+        });
         return view;
     }
 }

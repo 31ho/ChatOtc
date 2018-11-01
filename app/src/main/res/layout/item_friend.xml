@@ -10,6 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <CheckBox
+            android:id="@+id/itemfriend_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"/>
+
     <ImageView
         android:id="@+id/itemfriend_imageview"
         android:layout_width="50dp"

@@ -13,12 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.chatotc.ho.chatotc.R;
 import com.chatotc.ho.chatotc.chat.MessageActivity;
+import com.chatotc.ho.chatotc.model.ChatModel;
 import com.chatotc.ho.chatotc.model.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,12 +33,15 @@ import java.util.List;
 
 public class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
 
+    ChatModel chatModel = new ChatModel();
     List<UserModel> userModels;
     Activity mActivity;
+    int holderNum = 0;
 
-    public PeopleFragmentRecyclerViewAdapter(Activity activity) {
+    public PeopleFragmentRecyclerViewAdapter(Activity activity, int num) {
         mActivity = activity;
         userModels = new ArrayList<>();
+        holderNum = num;
         FirebaseDatabase.getInstance().getReference().child("users").orderByChild("userName").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -67,6 +72,11 @@ public class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<Recy
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
+
+        if(holderNum == 1){
+            ((CustomViewHolder)viewHolder).checkBox.setVisibility(View.VISIBLE);
+        }
+
         Glide.with(viewHolder.itemView.getContext())
                 .load(userModels.get(i).profileImageUrl)
                 .apply(new RequestOptions().circleCrop())
@@ -96,6 +106,16 @@ public class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         if(userModels.get(i).comment != null) {
             ((CustomViewHolder)viewHolder).textView_comment.setText(userModels.get(i).comment);
         }
+        ((CustomViewHolder)viewHolder).checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                     chatModel.users.put(userModels.get(i).uid, true);
+                } else {
+                    chatModel.users.remove(userModels.get(i));
+                }
+            }
+        });
     }
 
     @Override
@@ -103,5 +123,8 @@ public class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<Recy
         return userModels.size();
     }
 
+    public ChatModel getChatModel(){
+        return chatModel;
+    }
 
 }

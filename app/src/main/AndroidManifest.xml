@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.chatotc.ho.chatotc">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -24,15 +24,15 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".chat.MessageActivity"></activity>
+        <activity android:name=".chat.MessageActivity" />
 
-        <service
-            android:name=".MyFirebaseMessagingService">
+        <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
+        <activity android:name=".SelectFriendActivity"></activity>
     </application>
 
 </manifest>

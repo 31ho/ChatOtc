@@ -2,15 +2,12 @@ package com.chatotc.ho.chatotc.fragment;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -60,6 +57,7 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
     int peopleCount = 0;
+
     public MessageRecyclerViewAdapter(String chatRoomUid, String des, String uid, RecyclerView rView){
         comments = new ArrayList<>();
         this.chatRoomUid = chatRoomUid;
