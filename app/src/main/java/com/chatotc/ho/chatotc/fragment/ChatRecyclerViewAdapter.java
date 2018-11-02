@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.chatotc.ho.chatotc.R;
+import com.chatotc.ho.chatotc.chat.GroupMessageActivity;
 import com.chatotc.ho.chatotc.chat.MessageActivity;
 import com.chatotc.ho.chatotc.model.ChatModel;
 import com.chatotc.ho.chatotc.model.UserModel;
@@ -35,6 +36,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private String uid;
     private List<ChatModel> chatModelList = new ArrayList<>();
+    private List<String> keys = new ArrayList<>();
     private ArrayList<String> destinationUsers = new ArrayList<>();
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
 
@@ -53,6 +55,7 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
                         chatModelList.clear();
                         for (DataSnapshot item :dataSnapshot.getChildren()){
                             chatModelList.add(item.getValue(ChatModel.class));
+                            keys.add(item.getKey());
                         }
                         notifyDataSetChanged();
                     }
@@ -111,26 +114,32 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter {
             String lastMessageKey = (String) commentMap.keySet().toArray()[0];
             chatRoomViewHolder.chatRoom_last_message.setText(chatModelList.get(i).comments.get(lastMessageKey).message);
 
-            chatRoomViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), MessageActivity.class);
-                    intent.putExtra("destinationUid", destinationUsers.get(i));
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                        ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(v.getContext(), R.anim.fromright, R.anim.toleft);
-                        v.getContext().startActivity(intent, activityOptions.toBundle());
-
-                    }
-                }
-            });
-
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
             long unixTime = (long) chatModelList.get(i).comments.get(lastMessageKey).timestamp;
             Date date = new Date(unixTime);
             chatRoomViewHolder.chatRoom_timestamp.setText(simpleDateFormat.format(date));
         }
+
+        chatRoomViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = null;
+                if(chatModelList.get(i).users.size() > 2){
+                    intent = new Intent(v.getContext(), GroupMessageActivity.class);
+                    intent.putExtra("destinationRoom", keys.get(i));
+                } else {
+                    intent = new Intent(v.getContext(), MessageActivity.class);
+                    intent.putExtra("destinationUid", destinationUsers.get(i));
+                }
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(v.getContext(), R.anim.fromright, R.anim.toleft);
+                    v.getContext().startActivity(intent, activityOptions.toBundle());
+
+                }
+            }
+        });
     }
 
     @Override
